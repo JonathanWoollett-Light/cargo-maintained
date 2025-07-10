@@ -7,7 +7,7 @@ A tool to check crates are up to date.
 
 More specifically, checks that all crates in the dependency tree use the latest major version (excluding pre-release versions) of all their dependencies.
 
-Running it on this crate with a depth of 1 results in:
+Running it on this crate results in:
 
 ```text
 Some of the 390 dependencies are not up to date.
@@ -17,9 +17,7 @@ The offending crates are {"toml_edit", "toml_write", "potential_utf", "tokio", "
 
 It's quite slow mostly due to the bottleneck of the crates.io API.
 
-I would recommend running it with a depth of 1 or 0.
-
-Running it with a depth of 1 on [axum](https://github.com/tokio-rs/axum) results in:
+Running it on [axum](https://github.com/tokio-rs/axum) results in:
 
 ```text
 Some of the 753 dependencies are not up to date.
