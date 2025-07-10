@@ -8,15 +8,13 @@ More specifically, it checks that all crates in the dependency tree use the late
 
 ## How is this different to [cargo-outdated](https://crates.io/crates/cargo-outdated)?
 
-This tool tells you when version requirements are preventing using the latest versions of crates.
-
-`cargo-outdated` tells you when version requirements support using a newer version of a crate. It is `cargo update --check` if that existed.
-
-This tool finds dependencies version requirements which require pulling old crates *(so you can post an issue on their repository to update their crate before it starts breaking your compilation process, and maybe a follow-up so they start using dependabot, and maybe a followup so they automate releases)*.
-
 `cargo-outdated` tells you when to run `cargo-update` to update `Cargo.lock`.
 
 This tool tells you when to update `Cargo.toml`.
+
+`cargo-outdated` tells you when version requirements support using a newer version of a crate. *`cargo update --check` if that existed.*
+
+This tool tells you when version requirements are preventing using the latest versions of crates. *So you can post an issue on their repository to update their crate before it starts breaking your compilation process, and maybe a follow-up so they start using dependabot, and maybe a followup so they automate releases.*
 
 
 ## Installation
