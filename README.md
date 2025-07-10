@@ -1,11 +1,30 @@
 # cargo-maintained
 
 [![Crates.io](https://img.shields.io/crates/v/cargo-maintained)](https://crates.io/crates/cargo-maintained)
-[![docs](https://img.shields.io/crates/v/cargo-maintained?color=yellow&label=docs)](https://docs.rs/cargo-maintained)
 
 A tool to check crates are up to date.
 
 More specifically, checks that all crates in the dependency tree use the latest version of all their dependencies.
+
+## Installation
+
+```text
+cargo install cargo-maintained
+```
+
+## Usage
+
+```text
+Usage: cargo-maintained.exe [OPTIONS]
+
+Options:
+      --max-depth <MAX_DEPTH>  Maximum depth to explore the dependency tree. A depth of 0 means only the direct dependencies of the current crate [default: 1]
+      --prerelease             Whether to include pre-release versions in the check
+      --tree                   Whether to print the dependency tree
+  -h, --help                   Print help
+```
+
+## Examples
 
 Running it on this crate results in:
 

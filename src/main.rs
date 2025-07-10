@@ -12,10 +12,14 @@ const INDENT: &str = "  ";
 
 #[derive(Parser, Debug)]
 struct Args {
+    /// Maximum depth to explore the dependency tree.
+    /// A depth of 0 means only the direct dependencies of the current crate.
     #[arg(long, default_value = "1")]
     max_depth: usize,
+    /// Whether to include pre-release versions in the check.
     #[arg(long, default_value = "false")]
     prerelease: bool,
+    /// Whether to print the dependency tree.
     #[arg(long, default_value = "false")]
     tree: bool,
 }
