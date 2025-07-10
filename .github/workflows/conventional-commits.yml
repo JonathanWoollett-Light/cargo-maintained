@@ -1,17 +1,25 @@
-name: Conventional Commits Check
+name: Lint Commit Messages
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
 
 jobs:
-  convco-check:
+  commitlint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Run convco check on PR commits
-        uses: convco/convco-action@v0.2.0
         with:
-          command: check
+          fetch-depth: 0  # Fetches all history for all branches and tags
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install commitlint dependencies
+        run: npm install --save-dev @commitlint/cli @commitlint/config-conventional
+
+      - name: Lint all PR commits with commitlint
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
