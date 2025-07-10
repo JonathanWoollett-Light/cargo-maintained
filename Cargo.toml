@@ -1,0 +1,10 @@
+[package]
+name = "cargo-maintained"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cargo_metadata = "0.18"
+crates_io_api = "0.8"
+semver = "1"
+ansi_term = "0.12.1"
