@@ -16,6 +16,11 @@ This tool tells you when to update `Cargo.toml`.
 
 This tool tells you when version requirements are preventing using the latest versions of crates. *So you can post an issue on their repository to update their crate before it starts breaking your compilation process, and maybe a follow-up so they start using dependabot, and maybe a followup so they automate releases.*
 
+## Why would I use this?
+
+Becuase a large number of Rust crates only patch their latest release so if you (or any of your dependencies) stop using their latest release you are insecure.
+
+Becuase a large number of Rust crates release breaking changes capable of breaking your compilation if the whole eco-system doesn't update (see issues with crate compilation breaking as a result of `rand` `2.*.*`).
 
 ## Installation
 
