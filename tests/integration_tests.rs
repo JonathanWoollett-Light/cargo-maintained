@@ -41,7 +41,7 @@ fn new() {
 #[test]
 fn this() {
     let _exe = Command::new(BIN)
-        .current_dir(&MAN_DIR)
+        .current_dir(MAN_DIR)
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()
