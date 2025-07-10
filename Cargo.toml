@@ -8,3 +8,4 @@ cargo_metadata = "0.18"
 crates_io_api = "0.8"
 semver = "1"
 ansi_term = "0.12.1"
+clap = { version = "4.5.41", features = ["derive"] }

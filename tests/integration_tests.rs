@@ -29,7 +29,7 @@ fn new() {
 
     let _exe = Command::new(BIN)
         .current_dir(&crate_dir)
-        .stdout(Stdio::inherit())
+        // .stdout(Stdio::inherit())
         .output()
         .unwrap();
     println!("Executed checker");
@@ -42,7 +42,7 @@ fn new() {
 fn this() {
     let _exe = Command::new(BIN)
         .current_dir(&MAN_DIR)
-        .stdout(Stdio::inherit())
+        // .stdout(Stdio::inherit())
         .output()
         .unwrap();
     println!("Executed checker");

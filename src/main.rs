@@ -1,5 +1,6 @@
 use ansi_term::Colour::{Green, Red};
 use cargo_metadata::{CargoOpt, MetadataCommand};
+use clap::Parser;
 use crates_io_api::{CrateResponse, Dependency, SyncClient};
 use semver::{Op, Prerelease, Version, VersionReq};
 use std::collections::{HashMap, HashSet};
@@ -8,6 +9,35 @@ use std::time::Duration;
 
 const INDENT: &str = "  ";
 
+#[derive(Parser, Debug)]
+struct Args {
+    #[arg(long, default_value = "1")]
+    max_depth: usize,
+    #[arg(long, default_value = "false")]
+    prerelease: bool,
+    #[arg(long, default_value = "false")]
+    tree: bool,
+}
+
+#[derive(Debug)]
+struct ImmutableState {
+    max_depth: usize,
+    prerelease: bool,
+    tree: bool,
+}
+
+#[derive(Debug, Default)]
+struct MutableState {
+    /// Stores cached crates.io info about crates.
+    crate_cache: HashMap<String, CrateResponse>,
+    /// Stores cached dependencies of the latest versions of crates.
+    deps_cache: HashMap<String, Vec<Dependency>>,
+    /// The total number of crates checked.
+    count: usize,
+    /// The crates not using latest major versions.
+    villains: HashSet<String>,
+}
+
 // TODO Filter by active features.
 // TODO Add a progress bar, we can make rough estimates based on how long it
 // takes to cover each item, if we have 6 items at depth 0, we split progress
@@ -15,6 +45,8 @@ const INDENT: &str = "  ";
 // take 4*6*time per item.
 // TODO Add ability to specify strictness (e.g. latest major, or latest major-minor or latest major-minor-patch etc.)
 fn main() -> ExitCode {
+    let args = Args::parse();
+
     // Get metadata for current crate/workspace
     let metadata = MetadataCommand::new()
         .current_dir(std::env::current_dir().unwrap())
@@ -28,11 +60,12 @@ fn main() -> ExitCode {
     )
     .expect("Failed to create crates.io client");
 
-    let mut crate_cache = HashMap::new();
-    let mut deps_cache = HashMap::new();
-    let mut count = 0;
-    let max_depth = 1;
-    let mut villains = HashSet::new();
+    let mut mutable_state = MutableState::default();
+    let immutable_state = ImmutableState {
+        max_depth: args.max_depth,
+        prerelease: args.prerelease,
+        tree: args.tree,
+    };
 
     let latest = metadata.packages.iter().fold(true, |acc, pkg| {
         let latest_pkg_deps = pkg.dependencies.iter().fold(true, |acc, dep| {
@@ -43,15 +76,14 @@ fn main() -> ExitCode {
                     &dep.req,
                     1,
                     &client,
-                    &mut crate_cache,
-                    &mut deps_cache,
-                    &mut count,
-                    max_depth,
                     &pkg.name,
-                    &mut villains,
+                    &immutable_state,
+                    &mut mutable_state,
                 ),
                 _ => {
-                    println!("skipping {}", dep.name);
+                    if immutable_state.tree {
+                        println!("skipping {}", dep.name);
+                    }
                     true
                 } // Ignore non-crates.io dependencies
             };
@@ -62,12 +94,21 @@ fn main() -> ExitCode {
     });
 
     if latest {
-        println!("All of the {count} dependencies are up to date.");
+        println!(
+            "All of the {} dependencies are up to date.",
+            mutable_state.count
+        );
         ExitCode::SUCCESS
     } else {
-        println!("Some of the {count} dependencies are not up to date.");
-        println!("There are {} offending crates", villains.len());
-        println!("The offending crates are {villains:?}");
+        println!(
+            "Some of the {} dependencies are not up to date.",
+            mutable_state.count
+        );
+        println!(
+            "There are {} offending crates",
+            mutable_state.villains.len()
+        );
+        println!("The offending crates are {:?}", mutable_state.villains);
         ExitCode::FAILURE
     }
 }
@@ -77,20 +118,22 @@ fn handle_pkg(
     version: &VersionReq,
     depth: usize,
     client: &SyncClient,
-    // Stores cached crates.io info about crates.
-    crate_cache: &mut HashMap<String, CrateResponse>,
-    // Stores cached dependencies of the latest versions of crates.
-    deps_cache: &mut HashMap<String, Vec<Dependency>>,
-    // The total number of crates checked.
-    count: &mut usize,
-    // The maximum depth to search in the dependency tree,
-    max_depth: usize,
     parent: &str,
-    // The crates not using latest major versions.
-    villains: &mut HashSet<String>,
+    immutable_state: &ImmutableState,
+    mutable_state: &mut MutableState,
 ) -> bool {
-    let prefix = format!("{}{name}", INDENT.repeat(depth+1));
-    // println!("got here: {}",name);
+    let MutableState {
+        crate_cache,
+        deps_cache,
+        count,
+        villains,
+    } = mutable_state;
+    let ImmutableState {
+        max_depth,
+        prerelease,
+        tree,
+    } = immutable_state;
+    let prefix = format!("{}{name}", INDENT.repeat(depth + 1));
 
     if !crate_cache.contains_key(name) {
         *count += 1;
@@ -112,9 +155,11 @@ fn handle_pkg(
     // If it cannot get a non pre-release version, get the latest pre-release.
     // If it cannot get a release, print a message and return.
     let latest_release = versions.iter().filter(|v| v.pre == Prerelease::EMPTY).max();
-    let latest_prerelease = versions.iter().max();
+    let latest_prerelease = prerelease.then(|| versions.iter().max()).flatten();
     let Some(latest) = latest_release.or(latest_prerelease) else {
-        println!("{prefix} can't find release");
+        if *tree {
+            println!("{prefix} can't find release");
+        }
         return true;
     };
 
@@ -146,18 +191,24 @@ fn handle_pkg(
         villains.insert(parent.to_string());
     };
 
-    if depth >= max_depth {
-        println!(" reached max depth");
+    if depth >= *max_depth {
+        if *tree {
+            println!(" reached max depth");
+        }
         return allows_latest_major;
     }
 
     // If the crate was cached we have already checked its dependencies.
     if deps_cache.contains_key(name) {
-        println!(" dependencies already checked");
+        if *tree {
+            println!(" dependencies already checked");
+        }
         return allows_latest_major;
     }
 
-    println!();
+    if *tree {
+        println!();
+    }
     let deps = client
         .crate_dependencies(name, &latest.to_string())
         .unwrap();
@@ -169,12 +220,9 @@ fn handle_pkg(
             &VersionReq::parse(&dep.req).unwrap(),
             depth + 1,
             client,
-            crate_cache,
-            deps_cache,
-            count,
-            max_depth,
             name,
-            villains,
+            immutable_state,
+            mutable_state,
         );
         acc && latest_pkg
     });
