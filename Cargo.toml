@@ -21,7 +21,6 @@ keywords = [
 ]
 
 repository = "https://github.com/JonathanWoollett-Light/cargo-maintained"
-documentation = "https://docs.rs/cargo-maintained/"
 readme = "README.md"
 
 [dependencies]
