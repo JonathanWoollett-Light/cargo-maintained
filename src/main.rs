@@ -64,7 +64,7 @@ fn main() -> ExitCode {
         .expect("Failed to read cargo metadata");
 
     let client = SyncClient::new(
-        "dependency-checker (github.com/yourname/dependency-checker)",
+        "cargo-maintained (github.com/JonathanWoollett-Light/cargo-maintained)",
         Duration::from_millis(100),
     )
     .expect("Failed to create crates.io client");
