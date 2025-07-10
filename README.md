@@ -1,5 +1,8 @@
 # cargo-maintained
 
+[![Crates.io](https://img.shields.io/crates/v/cargo-maintained)](https://crates.io/crates/cargo-maintained)
+[![docs](https://img.shields.io/crates/v/cargo-maintained?color=yellow&label=docs)](https://docs.rs/cargo-maintained)
+
 A tool to check crates are up to date.
 
 More specifically, checks that all crates in the dependency tree use the latest major version (excluding pre-release versions) of all their dependencies.
