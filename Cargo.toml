@@ -5,6 +5,21 @@ edition = "2024"
 description = "A tool to check crates are up to date."
 license = "Apache-2.0"
 
+authors = [
+    "Jonathan Woollett-Light <jonathanwoollettlight@proton.me>",
+]
+categories = [
+    "development-tools",
+    "development-tools::cargo-plugins"
+]
+keywords = [
+    "cargo",
+    "subcommand",
+    "dependencies",
+    "cargo-subcommand",
+    "deps",
+]
+
 repository = "https://github.com/JonathanWoollett-Light/cargo-maintained"
 documentation = "https://docs.rs/cargo-maintained/"
 readme = "README.md"
