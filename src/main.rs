@@ -194,7 +194,7 @@ fn handle_pkg(
         if *tree {
             print!(
                 "{}",
-                Green.paint(&format!("{prefix} ({latest}) ∈ {{{version}}}"))
+                Green.paint(format!("{prefix} ({latest}) ∈ {{{version}}}"))
             );
         }
     } else {
