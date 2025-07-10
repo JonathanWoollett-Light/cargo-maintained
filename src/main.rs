@@ -44,6 +44,9 @@ struct MutableState {
     villains: HashSet<String>,
 }
 
+// TODO Add progress bar that estimates progress.
+// TODO Rewrite to use iterative approach instead of recursive.
+// TODO When outputting problem crates output them in depth order (or list each depth as separate list)
 // TODO Filter by active features.
 // TODO Add a progress bar, we can make rough estimates based on how long it
 // takes to cover each item, if we have 6 items at depth 0, we split progress
