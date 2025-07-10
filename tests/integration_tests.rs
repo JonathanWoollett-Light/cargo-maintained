@@ -69,8 +69,8 @@ fn axum() {
 
     let _exe = Command::new(BIN)
         .current_dir(&crate_dir)
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
+        // .stdout(Stdio::inherit())
+        // .stderr(Stdio::inherit())
         .output()
         .unwrap();
     println!("Executed checker");
