@@ -4,7 +4,16 @@
 
 A tool to check crates are up to date.
 
-More specifically, checks that all crates in the dependency tree use the latest version of all their dependencies.
+More specifically, it checks that all crates in the dependency tree use the latest versions of all their dependencies.
+
+## How is this different to [cargo-outdated](https://crates.io/crates/cargo-outdated)?
+
+This tool tells you when version requirements are preventing using the latest versions of crates.
+
+`cargo-outdated` tells you when version requirements support using a newer version of a crate. It is `cargo update --check` if that existed.
+
+This tool finds dependencies version requirements which require pulling old crates *(so you can post an issue on their repository to update their crate before it starts breaking your compilation process, and maybe a follow-up so they start using dependabot, and maybe a followup so they automate releases)*.
+
 
 ## Installation
 
