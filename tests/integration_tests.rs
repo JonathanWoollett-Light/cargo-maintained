@@ -42,11 +42,36 @@ fn new() {
 fn this() {
     let _exe = Command::new(BIN)
         .current_dir(&MAN_DIR)
-        // .stdout(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+        .unwrap();
+    // println!("Executed checker");
+
+    // println!("stdout: {}", String::from_utf8_lossy(&_exe.stdout));
+    // println!("stderr: {}", String::from_utf8_lossy(&_exe.stderr));
+}
+
+#[test]
+fn axum() {
+    const NAME: &str = "axum";
+    let temp_dir = PathBuf::from(TEMP_DIR);
+    let crate_dir = temp_dir.join(NAME);
+    if !crate_dir.exists() {
+        let _cmd = Command::new("git")
+            .arg("clone")
+            .arg("https://github.com/tokio-rs/axum")
+            .current_dir(&temp_dir)
+            .output()
+            .unwrap();
+    }
+    println!("Cloned axum project");
+
+    let _exe = Command::new(BIN)
+        .current_dir(&crate_dir)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
         .unwrap();
     println!("Executed checker");
-
-    println!("stdout: {}", String::from_utf8_lossy(&_exe.stdout));
-    println!("stderr: {}", String::from_utf8_lossy(&_exe.stderr));
 }

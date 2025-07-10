@@ -2,7 +2,8 @@ use ansi_term::Colour::{Green, Red};
 use cargo_metadata::{CargoOpt, MetadataCommand};
 use clap::Parser;
 use crates_io_api::{CrateResponse, Dependency, SyncClient};
-use semver::{Op, Prerelease, Version, VersionReq};
+use indicatif::{ProgressBar, ProgressStyle};
+use semver::{Prerelease, Version, VersionReq};
 use std::collections::{HashMap, HashSet};
 use std::process::ExitCode;
 use std::time::Duration;
@@ -24,6 +25,7 @@ struct ImmutableState {
     max_depth: usize,
     prerelease: bool,
     tree: bool,
+    bar: ProgressBar,
 }
 
 #[derive(Debug, Default)]
@@ -60,18 +62,22 @@ fn main() -> ExitCode {
     )
     .expect("Failed to create crates.io client");
 
+    let bar = ProgressBar::new_spinner();
+    bar.set_style(ProgressStyle::with_template("{spinner:.cyan/blue}").unwrap());
+
     let mut mutable_state = MutableState::default();
     let immutable_state = ImmutableState {
         max_depth: args.max_depth,
         prerelease: args.prerelease,
         tree: args.tree,
+        bar,
     };
 
     let latest = metadata.packages.iter().fold(true, |acc, pkg| {
         let latest_pkg_deps = pkg.dependencies.iter().fold(true, |acc, dep| {
             // Skip non-crates.io dependencies
-            let latest_deps = match &dep.source {
-                Some(source) if source.starts_with("registry+") => handle_pkg(
+            let latest_deps = if let Some(true) = dep.source.as_ref().map(|s| s.is_crates_io()) {
+                handle_pkg(
                     &dep.name,
                     &dep.req,
                     1,
@@ -79,19 +85,22 @@ fn main() -> ExitCode {
                     &pkg.name,
                     &immutable_state,
                     &mut mutable_state,
-                ),
-                _ => {
-                    if immutable_state.tree {
-                        println!("skipping {}", dep.name);
-                    }
-                    true
-                } // Ignore non-crates.io dependencies
+                )
+            } else {
+                if immutable_state.tree {
+                    println!("skipping {}", dep.name);
+                }
+                true
             };
 
             acc && latest_deps
         });
         acc && latest_pkg_deps
     });
+
+    if !immutable_state.tree {
+        immutable_state.bar.finish();
+    }
 
     if latest {
         println!(
@@ -132,6 +141,7 @@ fn handle_pkg(
         max_depth,
         prerelease,
         tree,
+        bar,
     } = immutable_state;
     let prefix = format!("{}{name}", INDENT.repeat(depth + 1));
 
@@ -142,6 +152,13 @@ fn handle_pkg(
     let entry = crate_cache
         .entry(name.to_string())
         .or_insert_with(|| client.get_crate(name).unwrap());
+
+    if !*tree {
+        // println!("tick");
+        bar.tick();
+        use std::io::Write;
+        std::io::stdout().flush().unwrap();
+    }
 
     // Skip versions we can't parse.
     let versions = entry
@@ -164,30 +181,22 @@ fn handle_pkg(
     };
 
     // TODO We can probably hightlight the specific comparator that breaks it.
-    let allows_latest_major = version.comparators.iter().all(|c| {
-        match c.op {
-            Op::Exact => c.major == latest.major,
-            Op::Greater => c.major < latest.major,
-            Op::GreaterEq => c.major <= latest.major,
-            Op::Less => c.major > latest.major,
-            Op::LessEq => c.major >= latest.major,
-            Op::Wildcard => true,                 // Wildcard allows any version
-            Op::Tilde => c.major == latest.major, // Tilde allows only the same
-            Op::Caret => c.major == latest.major, // Caret allows only the same major
-            _ => true,                            // Allow any other operator
-        }
-    });
+    let allows_latest_major = version.comparators.iter().all(|c| c.matches(latest));
 
     if allows_latest_major {
-        print!(
-            "{}",
-            Green.paint(&format!("{prefix} ({latest}) ∈ {{{version}}}"))
-        );
+        if *tree {
+            print!(
+                "{}",
+                Green.paint(&format!("{prefix} ({latest}) ∈ {{{version}}}"))
+            );
+        }
     } else {
-        print!(
-            "{}",
-            Red.paint(format!("{prefix} ({latest}) /∈ {{{version}}}"))
-        );
+        if *tree {
+            print!(
+                "{}",
+                Red.paint(format!("{prefix} ({latest}) /∈ {{{version}}}"))
+            );
+        }
         villains.insert(parent.to_string());
     };
 
