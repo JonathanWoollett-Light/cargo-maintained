@@ -5,7 +5,7 @@
 
 A tool to check crates are up to date.
 
-More specifically, checks that all crates in the dependency tree use the latest major version (excluding pre-release versions) of all their dependencies.
+More specifically, checks that all crates in the dependency tree use the latest version of all their dependencies.
 
 Running it on this crate results in:
 
