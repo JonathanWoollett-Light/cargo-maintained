@@ -12,6 +12,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run convco check on PR commits
-        uses: convco/convco-action
+        uses: convco/convco-action@v0.2.0
         with:
           command: check
