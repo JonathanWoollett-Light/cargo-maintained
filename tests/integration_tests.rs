@@ -42,8 +42,8 @@ fn new() {
 fn this() {
     let _exe = Command::new(BIN)
         .current_dir(MAN_DIR)
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
+        // .stdout(Stdio::inherit())
+        // .stderr(Stdio::inherit())
         .output()
         .unwrap();
     // println!("Executed checker");
