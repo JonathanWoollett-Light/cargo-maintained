@@ -1,6 +1,0 @@
-version: 2
-updates:
-  - package-ecosystem: "cargo"
-    directory: "/"          # Adjust if your Cargo.toml is in a subdirectory
-    schedule:
-      interval: "daily"
