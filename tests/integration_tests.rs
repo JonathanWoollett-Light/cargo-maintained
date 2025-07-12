@@ -1,14 +1,11 @@
-use std::{
-    path::PathBuf,
-    process::{Command, Stdio},
-};
+use std::{path::PathBuf, process::Command};
 
 const TEMP_DIR: &str = env!("CARGO_TARGET_TMPDIR");
 const BIN: &str = env!("CARGO_BIN_EXE_cargo-maintained");
 const MAN_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
 #[test]
-fn new() {
+fn fast_new() {
     const NAME: &str = "new";
     let temp_dir = PathBuf::from(TEMP_DIR);
     let crate_dir = temp_dir.join(NAME);
@@ -30,6 +27,8 @@ fn new() {
     let _exe = Command::new(BIN)
         .current_dir(&crate_dir)
         // .stdout(Stdio::inherit())
+        // .stderr(Stdio::inherit())
+        .arg("hidden")
         .output()
         .unwrap();
     println!("Executed checker");
@@ -39,17 +38,18 @@ fn new() {
 }
 
 #[test]
-fn this() {
+fn fast_this() {
     let _exe = Command::new(BIN)
         .current_dir(MAN_DIR)
         // .stdout(Stdio::inherit())
         // .stderr(Stdio::inherit())
+        .arg("hidden")
         .output()
         .unwrap();
-    // println!("Executed checker");
+    println!("Executed checker");
 
-    // println!("stdout: {}", String::from_utf8_lossy(&_exe.stdout));
-    // println!("stderr: {}", String::from_utf8_lossy(&_exe.stderr));
+    println!("stdout: {}", String::from_utf8_lossy(&_exe.stdout));
+    println!("stderr: {}", String::from_utf8_lossy(&_exe.stderr));
 }
 
 #[test]
@@ -71,6 +71,7 @@ fn axum() {
         .current_dir(&crate_dir)
         // .stdout(Stdio::inherit())
         // .stderr(Stdio::inherit())
+        .arg("hidden")
         .output()
         .unwrap();
     println!("Executed checker");
