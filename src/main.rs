@@ -133,7 +133,7 @@ fn main() -> ExitCode {
         ExitCode::SUCCESS
     } else {
         println!("Some of the {number_of_packages} dependencies are not up to date.",);
-        println!("There are {} offending crates", villains.len());
+        println!("There are {} offending crates.", villains.len());
         println!("The offending crates are {villains:?}");
         ExitCode::FAILURE
     }

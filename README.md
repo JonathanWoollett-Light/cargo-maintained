@@ -34,10 +34,9 @@ cargo install cargo-maintained
 Usage: cargo-maintained.exe [OPTIONS]
 
 Options:
-      --max-depth <MAX_DEPTH>  Maximum depth to explore the dependency tree. A depth of 0 means only the direct dependencies of the current crate [default: 1]
-      --prerelease             Whether to include pre-release versions in the check
-      --tree                   Whether to print the dependency tree
-  -h, --help                   Print help
+      --prerelease  Whether to include pre-release versions in the check
+      --hidden      Whether to hide the progress bar
+  -h, --help        Print help
 ```
 
 ## Examples
@@ -45,9 +44,10 @@ Options:
 Running it on this crate results in:
 
 ```text
-Some of the 390 dependencies are not up to date.
-There are 72 offending crates
-The offending crates are {"toml_edit", "toml_write", "potential_utf", "tokio", "writeable", "icu_collections", "core-foundation", "base64", "native-tls", "tempfile", "security-framework", "unicode-xid", "schannel", "anstyle-query", "camino", "foreign-types", "cargo-util-schemas", "serde-value", "icu_locale_core", "chrono", "mio", "openssl-sys", "unicode-ident", "yoke", "fastrand", "wasi", "io-uring", "tracing", "bumpalo", "icu_normalizer", "anstream", "icu_provider", "smallvec", "indicatif", "zerovec-derive", "portable-atomic", "openssl", "httparse", "futures", "ordered-float", "reqwest", "serde-untagged", "socket2", "tinystr", "backtrace", "tokio-native-tls", "addr2line", "toml", "zerotrie", "rustls-pki-types", "web-time", "zerovec", "windows-sys", "litemap", "rustix", "hashbrown", "object", "tower", "cargo_metadata", "http", "hyper-util", "tower-http", "futures-util", "anstyle-wincon", "ansi_term", "anstyle-parse", "want", "winnow", "windows-targets", "tower-service", "ipnet", "displaydoc"}
+████████████████████ 199/199 [00:01:31 / 00:00:00] 2.1729/s                 
+Some of the 199 dependencies are not up to date.
+There are 64 offending crates.
+The offending crates are {"toml_write", "bumpalo", "tokio-native-tls", "io-uring", "tempfile", "rustls-pki-types", "tokio", "fastrand", "want", "web-time", "icu_locale_core", "displaydoc", "http", "tower", "tracing", "tower-service", "backtrace", "anstyle-wincon", "schannel", "indicatif", "anstream", "potential_utf", "winnow", "cargo_metadata", "writeable", "hashbrown", "security-framework", "cargo-util-schemas", "rustix", "zerotrie", "reqwest", "openssl-sys", "socket2", "mio", "serde-value", "clap", "icu_provider", "zerovec", "litemap", "icu_collections", "ordered-float", "portable-atomic", "serde-untagged", "native-tls", "object", "chrono", "hyper-util", "anstyle-parse", "yoke", "wasi", "unicode-xid", "anstyle-query", "icu_normalizer", "unicode-ident", "tinystr", "camino", "openssl", "futures-util", "ipnet", "tower-http", "futures", "zerovec-derive", "httparse", "base64"}
 ```
 
 It's quite slow mostly due to the bottleneck of the crates.io API.
@@ -55,7 +55,7 @@ It's quite slow mostly due to the bottleneck of the crates.io API.
 Running it on [axum](https://github.com/tokio-rs/axum) results in:
 
 ```text
-Some of the 753 dependencies are not up to date.
-There are 131 offending crates
-The offending crates are {"hickory-resolver", "sharded-slab", "base64", "eventsource-stream", "brotli", "async-lock", "core-foundation", "crypto-common", "idna_adapter", "tower", "itertools", "hashlink", "thiserror", "tokio-native-tls", "inout", "tinystr", "webpki-roots", "native-tls", "example-validator", "generic-array", "sqlx-core", "ctr", "quinn-proto", "icu_locid_transform", "rand", "hmac", "tokio", "tokio-tungstenite", "h2", "block-buffer", "toml", "typenum", "litemap", "aead", "aes-gcm", "byteorder", "ipnet", "hdrhistogram", "polyval", "postgres-types", "tokio-postgres", "which", "http-body", "async-session", "example-customize-extractor-error", "tungstenite", "zerovec-derive", "hkdf", "system-configuration", "encoding_rs", "cexpr", "android-tzdata", "signature", "sqlformat", "chrono", "tower-http", "askama_parser", "metrics-exporter-prometheus", "http", "rsa", "blake3", "bson", "combine", "resolv-conf", "rustls", "aws-lc-rs", "quickcheck_macros", "regex-automata", "metrics-util", "md-5", "futures-util", "icu_normalizer", "example-compression", "redis", "uuid", "tempfile", "diesel", "icu_provider", "hyper", "const-oid", "yoke", "sqlx-postgres", "typed-builder", "async-compression", "listenfd", "dotenvy", "zerovec", "sha1", "serde_bytes", "example-oauth", "serde_with", "winnow", "diesel-async", "bindgen", "hyper-rustls", "pbkdf2", "reqwest", "sha2", "hex", "phf_shared", "pq-sys", "sha-1", "reqwest-eventsource", "simple_asn1", "mongodb", "smallvec", "spki", "sqlx-mysql", "tokio-rustls", "parking_lot", "tower-service", "aes", "libloading", "clang-sys", "ghash", "displaydoc", "bitvec", "parking_lot_core", "digest", "toml_edit", "hickory-proto", "icu_properties", "oauth2", "axum-server", "der", "wasm-bindgen-futures", "matchit", "rustix", "pkcs8", "pkcs1", "crypto-mac"}
+Some of the 575 dependencies are not up to date.
+There are 200 offending crates.
+The offending crates are {"rsa", "writeable", "webpki-roots", "blake3", "num-bigint-dig", "sqlformat", "byteorder", "simple_asn1", "icu_locid", "uuid", "android-tzdata", "ctr", "sha1_smol", "sqlx-mysql", "tower-service", "valuable", "quickcheck", "reqwest", "quanta", "rustix", "hashbrown", "sqlx-postgres", "spki", "signature", "nom", "metrics-util", "tempfile", "askama_derive", "native-tls", "fastrand", "wasi", "num-bigint", "h2", "tracing", "askama_escape", "httpdate", "iana-time-zone", "combine", "flume", "aws-lc-rs", "hyper-util", "chrono", "async-session", "openssl-sys", "unicode-bidi", "icu_locid_transform", "backtrace", "pkcs1", "zerovec-derive", "md-5", "eventsource-stream", "polyval", "rustc_version", "base64", "sha2", "httparse", "futures-util", "winapi-util", "unicode-ident", "postgres-types", "futures-intrusive", "widestring", "sqlx-sqlite", "rustls-pki-types", "metrics", "jsonwebtoken", "sha-1", "event-listener", "listenfd", "assert-json-diff", "crypto-mac", "bitvec", "tungstenite", "quinn-udp", "tokio-postgres", "ghash", "mio", "displaydoc", "hickory-proto", "sketches-ddsketch", "hmac", "subtle", "winnow", "clang-sys", "winreg", "aes", "aes-gcm", "http", "cookie", "rand", "atoi", "parking_lot", "dsl_auto_type", "serde_with_macros", "zstd-sys", "socket2", "openssl", "hickory-resolver", "tokio", "zerocopy-derive", "reqwest-eventsource", "tokio-tungstenite", "icu_provider", "zerocopy", "typed-json", "tinyvec", "raw-cpuid", "inout", "pem", "icu_collections", "crossbeam-queue", "generic-array", "bindgen", "pkcs8", "object", "aws-lc-sys", "web-time", "deadpool", "askama", "oauth2", "atomic-waker", "mongodb", "jobserver", "tokio-rustls", "crypto-common", "der", "regex-automata", "tower", "rustc-hash", "crc32fast", "bson", "yoke", "encoding_rs", "portable-atomic", "tower-http", "typenum", "etcetera", "pbkdf2", "litemap", "quinn", "axum-server", "matchit", "sqlx", "cexpr", "http-range-header", "constant_time_eq", "postgres-protocol", "spin", "sharded-slab", "security-framework", "sqlx-core", "multer", "block-buffer", "aho-corasick", "nu-ansi-term", "zerovec", "dotenvy", "home", "want", "mime_guess", "hex", "askama_parser", "time", "quinn-proto", "aead", "digest", "libloading", "thread_local", "glob", "parking_lot_core", "redis", "itertools", "convert_case", "ring", "sha1", "icu_normalizer", "hkdf", "tracing-subscriber", "arc-swap", "tinystr", "validator_derive", "bincode", "crossbeam-epoch", "futures-timer", "tracing-log", "schannel", "system-configuration", "ipnet", "which", "ahash", "regex", "hdrhistogram", "tokio-native-tls", "concurrent-queue", "mongodb-internal-macros", "crossbeam-utils", "hostname", "ipconfig", "lazy_static", "bumpalo"}
 ```
