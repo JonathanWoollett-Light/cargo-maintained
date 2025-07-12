@@ -21,35 +21,31 @@ fn fast_new() {
         .unwrap();
     println!("Created project");
 
-    // println!("stdout: {}", String::from_utf8_lossy(&_cmd.stdout));
-    // println!("stderr: {}", String::from_utf8_lossy(&_cmd.stderr));
-
-    let _exe = Command::new(BIN)
+    let exe = Command::new(BIN)
         .current_dir(&crate_dir)
-        // .stdout(Stdio::inherit())
-        // .stderr(Stdio::inherit())
-        .arg("hidden")
+        // .stdout(std::process::Stdio::inherit())
+        // .stderr(std::process::Stdio::inherit())
+        .arg("--hidden")
         .output()
         .unwrap();
     println!("Executed checker");
 
-    // println!("stdout: {}", String::from_utf8_lossy(&_exe.stdout));
-    // println!("stderr: {}", String::from_utf8_lossy(&_exe.stderr));
+    assert!(exe.status.success());
 }
 
 #[test]
 fn fast_this() {
-    let _exe = Command::new(BIN)
+    println!("Started checker");
+    let exe = Command::new(BIN)
         .current_dir(MAN_DIR)
-        // .stdout(Stdio::inherit())
-        // .stderr(Stdio::inherit())
-        .arg("hidden")
+        // .stdout(std::process::Stdio::inherit())
+        // .stderr(std::process::Stdio::inherit())
+        .arg("--hidden")
         .output()
         .unwrap();
     println!("Executed checker");
 
-    println!("stdout: {}", String::from_utf8_lossy(&_exe.stdout));
-    println!("stderr: {}", String::from_utf8_lossy(&_exe.stderr));
+    assert!(!exe.status.success());
 }
 
 #[test]
@@ -67,12 +63,14 @@ fn axum() {
     }
     println!("Cloned axum project");
 
-    let _exe = Command::new(BIN)
+    let exe = Command::new(BIN)
         .current_dir(&crate_dir)
-        // .stdout(Stdio::inherit())
-        // .stderr(Stdio::inherit())
-        .arg("hidden")
+        // .stdout(std::process::Stdio::inherit())
+        // .stderr(std::process::Stdio::inherit())
+        .arg("--hidden")
         .output()
         .unwrap();
     println!("Executed checker");
+
+    assert!(!exe.status.success());
 }
