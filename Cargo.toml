@@ -27,5 +27,5 @@ readme = "README.md"
 cargo_metadata = "0.21.0"
 crates_io_api = "0.12.0"
 semver = "1.0.26"
-clap = { version = "4.5.43", features = ["derive"] }
+clap = { version = "4.5.45", features = ["derive"] }
 indicatif = "0.18.0"
