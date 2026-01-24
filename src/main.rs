@@ -4,7 +4,7 @@ use color_eyre::eyre::Context;
 use crates_io_api::SyncClient;
 use indicatif::{ProgressBar, ProgressStyle};
 use semver::{Prerelease, Version, VersionReq};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::process::ExitCode;
 use std::time::Duration;
 
@@ -118,7 +118,7 @@ fn main() -> color_eyre::eyre::Result<ExitCode> {
     pb.finish();
 
     let mut all_latest = true;
-    let mut villains = HashSet::new();
+    let mut villains = BTreeSet::new();
     for (_dep, (latest, pulls)) in dependencies
         .into_iter()
         .filter_map(|(x, y)| y.map(|z| (x, z)))
@@ -138,7 +138,10 @@ fn main() -> color_eyre::eyre::Result<ExitCode> {
     } else {
         println!("Some of the {number_of_packages} dependencies are not up to date.",);
         println!("There are {} offending crates.", villains.len());
-        println!("The offending crates are {villains:?}");
+        println!("The offending crates are:");
+        for villain in villains.iter() {
+            println!("- {villain}");
+        }
         Ok(ExitCode::FAILURE)
     }
 }
